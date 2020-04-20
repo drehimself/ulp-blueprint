@@ -1,0 +1,26 @@
+models:
+  Post:
+    title: string:400
+    content: longtext
+    published_at: nullable timestamp
+
+controllers:
+  Post:
+    index:
+      query: all
+      render: post.index with:posts
+
+    show:
+      render: post.show with:post
+
+    create:
+      render: post.create
+
+    store:
+      validate: title, content
+      save: post
+      send: ReviewNotification to:post.author with:post
+      dispatch: SyncMedia with:post
+      fire: NewPost with:post
+      flash: post.title
+      redirect: post.index
